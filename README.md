@@ -5,6 +5,7 @@
 |  |
 | ------- |
 | [0175-combine-two-tables](https://github.com/jay-panchal2711/LeetCode/tree/master/0175-combine-two-tables) |
+| [0185-department-top-three-salaries](https://github.com/jay-panchal2711/LeetCode/tree/master/0185-department-top-three-salaries) |
 | [0197-rising-temperature](https://github.com/jay-panchal2711/LeetCode/tree/master/0197-rising-temperature) |
 | [0570-managers-with-at-least-5-direct-reports](https://github.com/jay-panchal2711/LeetCode/tree/master/0570-managers-with-at-least-5-direct-reports) |
 | [0577-employee-bonus](https://github.com/jay-panchal2711/LeetCode/tree/master/0577-employee-bonus) |
