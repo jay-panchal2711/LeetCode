@@ -1,124 +1,112 @@
 class Solution:
     def smallestNumber(self, num: str, t: int) -> str:
-        # Check if t has prime factors other than 2, 3, 5, 7
-        temp_t = t
-        for p in (2, 3, 5, 7):
-            while temp_t % p == 0:
-                temp_t //= p
-        if temp_t > 1:
+        e2 = e3 = e5 = e7 = 0
+        while t % 2 == 0: e2 += 1; t //= 2
+        while t % 3 == 0: e3 += 1; t //= 3
+        while t % 5 == 0: e5 += 1; t //= 5
+        while t % 7 == 0: e7 += 1; t //= 7
+        if t != 1:
             return "-1"
 
-        # Factorizations of digits 1-9 into counts of [2, 3, 5, 7]
-        digit_factors = {
-            1: (0, 0, 0, 0),
-            2: (1, 0, 0, 0),
-            3: (0, 1, 0, 0),
-            4: (2, 0, 0, 0),
-            5: (0, 0, 1, 0),
-            6: (1, 1, 0, 0),
-            7: (0, 0, 0, 1),
-            8: (3, 0, 0, 0),
-            9: (0, 2, 0, 0)
-        }
+        digit_factors = [
+            (0,0,0,0),(0,0,0,0),(1,0,0,0),(0,1,0,0),(2,0,0,0),
+            (0,0,1,0),(1,1,0,0),(0,0,0,1),(3,0,0,0),(0,2,0,0),
+        ]
 
-        # Prime factorization of t
-        c2 = c3 = c5 = c7 = 0
-        temp_t = t
-        while temp_t % 2 == 0: c2 += 1; temp_t //= 2
-        while temp_t % 3 == 0: c3 += 1; temp_t //= 3
-        while temp_t % 5 == 0: c5 += 1; temp_t //= 5
-        while temp_t % 7 == 0: c7 += 1; temp_t //= 7
+        B3, B5, B7 = e3+1, e5+1, e7+1
+        def idx(a,b,c,d):
+            return ((a*B3+b)*B5+c)*B7+d
 
-        def can_satisfy(rem2, rem3, rem5, rem7, rem_len):
-            """Returns True if required factors fit within rem_len digits."""
-            rem2 = max(0, rem2)
-            rem3 = max(0, rem3)
-            rem5 = max(0, rem5)
-            rem7 = max(0, rem7)
+        size = (e2+1)*B3*B5*B7
+        minLen = [0]*size
 
-            min_digits = rem5 + rem7
-            
-            n9 = rem3 // 2
-            r3 = rem3 % 2
-            n8 = rem2 // 3
-            r2 = rem2 % 3
+        for a in range(e2+1):
+            for b in range(e3+1):
+                for c in range(e5+1):
+                    for d in range(e7+1):
+                        if a==0 and b==0 and c==0 and d==0:
+                            continue
+                        best = None
+                        for v in range(2,10):
+                            da,db,dc,dd = digit_factors[v]
+                            na = a-da if a>da else 0
+                            nb = b-db if b>db else 0
+                            nc = c-dc if c>dc else 0
+                            nd = d-dd if d>dd else 0
+                            if (na,nb,nc,nd) != (a,b,c,d):
+                                cand = 1 + minLen[idx(na,nb,nc,nd)]
+                                if best is None or cand < best:
+                                    best = cand
+                        minLen[idx(a,b,c,d)] = best
 
-            if r2 == 1 and r3 == 1:
-                min_digits += 1  # 6
-            elif r2 == 2 and r3 == 1:
-                min_digits += 2  # 6, 2 or 4, 3
-            elif r2 == 2:
-                min_digits += 1  # 4
-            elif r2 == 1 or r3 == 1:
-                min_digits += 1  # 2 or 3
+        def get_minlen(a,b,c,d):
+            return minLen[idx(a,b,c,d)]
 
-            min_digits += n9 + n8
-            return min_digits <= rem_len
+        def reduce_state(a,b,c,d,v):
+            da,db,dc,dd = digit_factors[v]
+            na = a-da if a>da else 0
+            nb = b-db if b>db else 0
+            nc = c-dc if c>dc else 0
+            nd = d-dd if d>dd else 0
+            return na,nb,nc,nd
 
-        def construct_suffix(rem2, rem3, rem5, rem7, rem_len):
-            """Constructs lexicographically smallest suffix of length rem_len."""
+        full_state = (e2,e3,e5,e7)
+        minlen_full = get_minlen(*full_state)
+
+        L = len(num)
+        digits_num = [int(ch) for ch in num]
+
+        def fill_suffix(state, length):
+            a,b,c,d = state
             res = []
-            for position in range(rem_len):
-                remaining_slots = rem_len - 1 - position
-                for d in range(1, 10):
-                    f2, f3, f5, f7 = digit_factors[d]
-                    if can_satisfy(rem2 - f2, rem3 - f3, rem5 - f5, rem7 - f7, remaining_slots):
-                        res.append(str(d))
-                        rem2 -= f2
-                        rem3 -= f3
-                        rem5 -= f5
-                        rem7 -= f7
+            remaining = length
+            for _ in range(length):
+                remaining -= 1
+                for v in range(1,10):
+                    na,nb,nc,nd = reduce_state(a,b,c,d,v)
+                    if get_minlen(na,nb,nc,nd) <= remaining:
+                        res.append(v)
+                        a,b,c,d = na,nb,nc,nd
                         break
-            return "".join(res)
+            return res
 
-        n = len(num)
-        
-        pref2, pref3, pref5, pref7 = [0]*(n+1), [0]*(n+1), [0]*(n+1), [0]*(n+1)
-        first_zero = -1
+        if 0 not in digits_num:
+            a,b,c,d = full_state
+            for v in digits_num:
+                a,b,c,d = reduce_state(a,b,c,d,v)
+            if a==0 and b==0 and c==0 and d==0:
+                return num
 
-        for i, ch in enumerate(num):
-            d = int(ch)
-            if d == 0:
-                if first_zero == -1:
-                    first_zero = i
-                pref2[i+1], pref3[i+1], pref5[i+1], pref7[i+1] = pref2[i], pref3[i], pref5[i], pref7[i]
-            else:
-                f2, f3, f5, f7 = digit_factors[d]
-                pref2[i+1] = pref2[i] + f2
-                pref3[i+1] = pref3[i] + f3
-                pref5[i+1] = pref5[i] + f5
-                pref7[i+1] = pref7[i] + f7
+        firstZero = L
+        for i,v in enumerate(digits_num):
+            if v == 0:
+                firstZero = i
+                break
 
-        # Check if num itself (with no zeroes) works
-        if first_zero == -1 and pref2[n] >= c2 and pref3[n] >= c3 and pref5[n] >= c5 and pref7[n] >= c7:
-            return num
+        max_pivot = min(firstZero, L-1)
 
-        # If there is a zero at index first_zero, we can process up to index first_zero
-        max_idx = n if first_zero == -1 else first_zero
+        prefix_states = [None]*(max_pivot+1)
+        prefix_states[0] = full_state
+        for i in range(1, max_pivot+1):
+            prefix_states[i] = reduce_state(*prefix_states[i-1], digits_num[i-1])
 
-        # Try matching prefix up to index i-1 and replacing num[i] with digit d > num[i]
-        for i in range(max_idx, -1, -1):
-            if i == n:
-                continue
+        answer = None
+        for i in range(max_pivot, -1, -1):
+            state = prefix_states[i]
+            start_d = digits_num[i] + 1
+            remaining_length = L - i - 1
+            for dd in range(start_d, 10):
+                na,nb,nc,nd = reduce_state(*state, dd)
+                if get_minlen(na,nb,nc,nd) <= remaining_length:
+                    suffix = fill_suffix((na,nb,nc,nd), remaining_length)
+                    answer = digits_num[:i] + [dd] + suffix
+                    break
+            if answer is not None:
+                break
 
-            curr_2, curr_3, curr_5, curr_7 = pref2[i], pref3[i], pref5[i], pref7[i]
+        if answer is not None:
+            return ''.join(map(str, answer))
 
-            start_digit = int(num[i]) + 1
-            for d in range(start_digit, 10):
-                f2, f3, f5, f7 = digit_factors[d]
-                rem_2 = c2 - (curr_2 + f2)
-                rem_3 = c3 - (curr_3 + f3)
-                rem_5 = c5 - (curr_5 + f5)
-                rem_7 = c7 - (curr_7 + f7)
-                rem_length = n - 1 - i
-
-                if can_satisfy(rem_2, rem_3, rem_5, rem_7, rem_length):
-                    suffix = construct_suffix(rem_2, rem_3, rem_5, rem_7, rem_length)
-                    return num[:i] + str(d) + suffix
-
-        # If length n cannot satisfy t, find the minimal target length > n
-        target_len = n + 1
-        while not can_satisfy(c2, c3, c5, c7, target_len):
-            target_len += 1
-
-        return construct_suffix(c2, c3, c5, c7, target_len)
+        target_length = max(L+1, minlen_full)
+        suffix = fill_suffix(full_state, target_length)
+        return ''.join(map(str, suffix))
