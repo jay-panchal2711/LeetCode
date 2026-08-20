@@ -17,6 +17,7 @@
 | [0607-sales-person](https://github.com/jay-panchal2711/LeetCode/tree/master/0607-sales-person) |
 | [0610-triangle-judgement](https://github.com/jay-panchal2711/LeetCode/tree/master/0610-triangle-judgement) |
 | [0620-not-boring-movies](https://github.com/jay-panchal2711/LeetCode/tree/master/0620-not-boring-movies) |
+| [0627-swap-sex-of-employees](https://github.com/jay-panchal2711/LeetCode/tree/master/0627-swap-sex-of-employees) |
 | [1068-product-sales-analysis-i](https://github.com/jay-panchal2711/LeetCode/tree/master/1068-product-sales-analysis-i) |
 | [1148-article-views-i](https://github.com/jay-panchal2711/LeetCode/tree/master/1148-article-views-i) |
 | [1280-students-and-examinations](https://github.com/jay-panchal2711/LeetCode/tree/master/1280-students-and-examinations) |
