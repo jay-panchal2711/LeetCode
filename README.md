@@ -20,6 +20,7 @@
 | [0627-swap-sex-of-employees](https://github.com/jay-panchal2711/LeetCode/tree/master/0627-swap-sex-of-employees) |
 | [1068-product-sales-analysis-i](https://github.com/jay-panchal2711/LeetCode/tree/master/1068-product-sales-analysis-i) |
 | [1148-article-views-i](https://github.com/jay-panchal2711/LeetCode/tree/master/1148-article-views-i) |
+| [1251-average-selling-price](https://github.com/jay-panchal2711/LeetCode/tree/master/1251-average-selling-price) |
 | [1280-students-and-examinations](https://github.com/jay-panchal2711/LeetCode/tree/master/1280-students-and-examinations) |
 | [1378-replace-employee-id-with-the-unique-identifier](https://github.com/jay-panchal2711/LeetCode/tree/master/1378-replace-employee-id-with-the-unique-identifier) |
 | [1581-customer-who-visited-but-did-not-make-any-transactions](https://github.com/jay-panchal2711/LeetCode/tree/master/1581-customer-who-visited-but-did-not-make-any-transactions) |
